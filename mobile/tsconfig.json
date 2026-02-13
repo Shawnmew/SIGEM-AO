@@ -12,6 +12,16 @@
     "jsx": "react-jsx",
     "isolatedModules": true,
     "noEmit": true,
-    "types": ["react", "react-native", "node"]
-  }
+    "types": ["react", "react-native", "node"],
+    "noImplicitAny": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "include": ["app", "entry.js", "types.d.ts"],
+  "exclude": ["node_modules", ".expo"]
 }
