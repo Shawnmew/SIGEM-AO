@@ -30,7 +30,7 @@ export default function ReportIncidentScreen() {
 
     setLoading(true)
     try {
-      const res = await axios.post(`${API_URL}/api/incidents`, {
+      await axios.post(`${API_URL}/api/incidents`, {
         title,
         description,
         address,
@@ -38,13 +38,14 @@ export default function ReportIncidentScreen() {
         latitude: -8.8383,
         longitude: 13.2344
       }, {
-        headers: { 'Authorization': `Bearer ${global.authToken}` }
+        headers: { 'Authorization': `Bearer ${(global as any).authToken}` }
       })
 
       Alert.alert('Sucesso', 'Incidente reportado!')
       router.back()
-    } catch (err) {
-      Alert.alert('Erro', 'Falha ao reportar incidente')
+    } catch (err: any) {
+      const message = err?.response?.data?.message || 'Falha ao reportar incidente'
+      Alert.alert('Erro', message)
       console.error('Report error:', err)
     } finally {
       setLoading(false)

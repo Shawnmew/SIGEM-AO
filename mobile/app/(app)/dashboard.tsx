@@ -44,23 +44,36 @@ export default function DashboardScreen() {
   const fetchIncidents = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/incidents`, {
-        headers: { 'Authorization': `Bearer ${global.authToken}` }
+        headers: { 'Authorization': `Bearer ${(global as any).authToken}` }
       })
-      setIncidents(res.data)
+      setIncidents(res.data || [])
       setLoading(false)
-    } catch (err) {
-      console.error('Fetch error:', err)
+    } catch (err: any) {
+      console.error('Fetch error:', err?.message)
       setLoading(false)
     }
   }
 
   const setupSocket = () => {
-    const socket = io(API_URL)
-    socket.on('new_incident', (incident) => {
-      setAlerts(prev => [incident, ...prev].slice(0, 10))
-      setIncidents(prev => [incident, ...prev])
-    })
-    return () => socket.disconnect()
+    try {
+      const socket = io(API_URL, {
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5
+      })
+      
+      socket.on('new_incident', (incident: any) => {
+        setAlerts(prev => [incident, ...prev].slice(0, 10))
+        setIncidents(prev => [incident, ...prev])
+      })
+      
+      return () => {
+        if (socket) socket.disconnect()
+      }
+    } catch (err: any) {
+      console.error('Socket setup error:', err?.message)
+    }
   }
 
   const handleLogout = () => {

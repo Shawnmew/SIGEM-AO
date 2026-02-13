@@ -57,31 +57,46 @@ export default function AdminDashboardScreen() {
   const fetchIncidents = async () => {
     try {
       const res = await axios.get(`${API_URL}/api/incidents/all`, {
-        headers: { 'Authorization': `Bearer ${global.authToken}` }
+        headers: { 'Authorization': `Bearer ${(global as any).authToken}` }
       })
-      setIncidents(res.data)
+      setIncidents(res.data || [])
       setLoading(false)
-    } catch (err) {
-      console.error('Fetch error:', err)
+    } catch (err: any) {
+      console.error('Fetch error:', err?.message)
       setLoading(false)
     }
   }
 
   const setupSocket = () => {
-    const socket = io(API_URL)
-    socket.on('new_incident', (incident) => {
-      setAlerts(prev => [incident, ...prev].slice(0, 10))
-      setIncidents(prev => [incident, ...prev])
-    })
-    socket.on('incident_status_changed', (data) => {
-      setIncidents(prev =>
-        prev.map(i => i.id === data.id ? { ...i, status: data.status } : i)
-      )
-    })
-    socket.on('incident_deleted', () => {
-      fetchIncidents()
-    })
-    return () => socket.disconnect()
+    try {
+      const socket = io(API_URL, {
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5
+      })
+      
+      socket.on('new_incident', (incident: any) => {
+        setAlerts(prev => [incident, ...prev].slice(0, 10))
+        setIncidents(prev => [incident, ...prev])
+      })
+      
+      socket.on('incident_status_changed', (data: any) => {
+        setIncidents(prev =>
+          prev.map(i => i.id === data.id ? { ...i, status: data.status } : i)
+        )
+      })
+      
+      socket.on('incident_deleted', () => {
+        fetchIncidents()
+      })
+      
+      return () => {
+        if (socket) socket.disconnect()
+      }
+    } catch (err: any) {
+      console.error('Socket setup error:', err?.message)
+    }
   }
 
   const handleSelectIncident = (id) => {
@@ -94,15 +109,15 @@ export default function AdminDashboardScreen() {
     setSelectedIncidents(newSet)
   }
 
-  const handleStatusChange = async (id, newStatus) => {
+  const handleStatusChange = async (id: number, newStatus: string) => {
     try {
       await axios.patch(`${API_URL}/api/incidents/${id}/status`, {
         status: newStatus
       }, {
-        headers: { 'Authorization': `Bearer ${global.authToken}` }
+        headers: { 'Authorization': `Bearer ${(global as any).authToken}` }
       })
       fetchIncidents()
-    } catch (err) {
+    } catch (err: any) {
       Alert.alert('Erro', 'Falha ao atualizar status')
     }
   }
@@ -127,14 +142,14 @@ export default function AdminDashboardScreen() {
           ids: Array.from(selectedIncidents),
           reason: deleteReason
         },
-        headers: { 'Authorization': `Bearer ${global.authToken}` }
+        headers: { 'Authorization': `Bearer ${(global as any).authToken}` }
       })
       setShowDeleteModal(false)
       setDeleteReason('')
       setSelectedIncidents(new Set())
       fetchIncidents()
       Alert.alert('Sucesso', 'Incidentes deletados')
-    } catch (err) {
+    } catch (err: any) {
       Alert.alert('Erro', 'Falha ao deletar incidentes')
     }
   }
@@ -145,8 +160,8 @@ export default function AdminDashboardScreen() {
       {
         text: 'Sair',
         onPress: () => {
-          global.authToken = null
-          global.authUser = null
+          ;(global as any).authToken = null
+          ;(global as any).authUser = null
           router.replace('/login')
         }
       }

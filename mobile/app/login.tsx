@@ -24,22 +24,23 @@ export default function LoginScreen() {
         password
       })
 
-      if (res.data.token) {
+      if (res.data?.token) {
         // Save token to storage
         const token = res.data.token
         // Store in AsyncStorage or similar
-        global.authToken = token
-        global.authUser = res.data.user
+        ;(global as any).authToken = token
+        ;(global as any).authUser = res.data.user
 
         // Navigate to app
-        if (res.data.user.role === 'admin') {
+        if (res.data.user?.role === 'admin') {
           router.replace('/(app)/admin-dashboard')
         } else {
           router.replace('/(app)/dashboard')
         }
       }
-    } catch (err) {
-      Alert.alert('Erro', err.response?.data?.message || 'Falha ao fazer login')
+    } catch (err: any) {
+      const message = err?.response?.data?.message || 'Falha ao fazer login'
+      Alert.alert('Erro', message)
       console.error('Login error:', err)
     } finally {
       setLoading(false)

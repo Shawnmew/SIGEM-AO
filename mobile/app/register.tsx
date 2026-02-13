@@ -20,7 +20,7 @@ export default function RegisterScreen() {
 
     setLoading(true)
     try {
-      const res = await axios.post(`${API_URL}/api/auth/register`, {
+      await axios.post(`${API_URL}/api/auth/register`, {
         name,
         email,
         password
@@ -28,8 +28,9 @@ export default function RegisterScreen() {
 
       Alert.alert('Sucesso', 'Conta criada! Faça login.')
       router.replace('/login')
-    } catch (err) {
-      Alert.alert('Erro', err.response?.data?.message || 'Falha ao registrar')
+    } catch (err: any) {
+      const message = err?.response?.data?.message || 'Falha ao registrar'
+      Alert.alert('Erro', message)
       console.error('Register error:', err)
     } finally {
       setLoading(false)
