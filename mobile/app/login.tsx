@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native'
 import { useRouter } from 'expo-router'
 import axios from 'axios'
 
-const API_URL = 'http://192.168.1.100:4001'
+const API_URL = 'http://192.168.0.201:4001'
 
 export default function LoginScreen() {
   const router = useRouter()

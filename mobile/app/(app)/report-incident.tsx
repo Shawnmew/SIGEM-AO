@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'expo-router'
 import axios from 'axios'
 
-const API_URL = 'http://192.168.1.100:4001'
+const API_URL = 'http://192.168.0.201:4001'
 
 export default function ReportIncidentScreen() {
   const router = useRouter()

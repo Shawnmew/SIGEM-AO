@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router'
 import axios from 'axios'
 import { io } from 'socket.io-client'
 
-const API_URL = 'http://192.168.1.100:4001'
+const API_URL = 'http://192.168.0.201:4001'
 
 const SEVERITY_COLORS = {
   light: '#10b981',
