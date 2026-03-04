@@ -1,0 +1,15 @@
+{
+  "name": "SIGEM-AO",
+  "short_name": "SIGEM-AO",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f0f5fa",
+  "theme_color": "#667eea",
+  "icons": [
+    {
+      "src": "vite.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

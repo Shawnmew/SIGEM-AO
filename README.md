@@ -56,3 +56,15 @@ Notas:
 - O frontend Vite + React já presente no repositório foi preservado sem alterações.
 - O backend expõe uma rota mínima `/api/incidents` e um servidor Socket.IO.
 - Veja `backend/.env.example` para variáveis necessárias.
+---
+
+## Suporte PWA e Mobile
+
+A aplicação agora é responsiva e pode ser instalada como um Progressive Web App:
+
+* **Manifesto** (`public/manifest.json`) com cores e ícone.  
+* **Service worker** (`public/sw.js`) cache básico para offline.  
+* `index.html` contém meta `theme-color` e link para o manifesto.  
+* CSS adaptativo com media queries tornando dashboards, tabelas e navegação legíveis em telemóveis.
+
+Para testar em dispositivo móvel ou simulador, abra a URL no navegador, verifique o prompt de "Adicionar à tela inicial" ou use as ferramentas de desenvolvimento do Chrome (device emulation).

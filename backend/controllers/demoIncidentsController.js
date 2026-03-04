@@ -10,7 +10,17 @@ export function getIncidents(req, res) {
 
 export function getAllIncidents(req, res) {
   if (!req.user || req.user.role !== 'admin') return res.status(403).json({ error: 'forbidden' })
-  return res.json({ data: demoData.incidents })
+  // attach reporter user info when available
+  const incidentsWithReporter = demoData.incidents.map(i => {
+    const reporter = Object.values(demoData.users).find(u => u.id === i.user_id)
+    return {
+      ...i,
+      reporter: reporter
+        ? { id: reporter.id, name: reporter.name, email: reporter.email }
+        : null
+    }
+  })
+  return res.json({ data: incidentsWithReporter })
 }
 
 export function createIncident(req, res) {
