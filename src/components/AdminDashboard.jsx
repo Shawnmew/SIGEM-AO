@@ -103,7 +103,7 @@ export default function AdminDashboard() {
     return () => clearInterval(interval)
   }, [token])
 
-  // Fetch all incidents
+  // Fetch all incidents (include reporter if provided by backend)
   useEffect(() => {
     const fetchIncidents = async () => {
       try {
@@ -172,7 +172,14 @@ export default function AdminDashboard() {
     }
   }, [showCreateModal])
 
-  if (loading) return <div className="admin-dashboard"><p>⏳ Carregando...</p></div>
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="spinner"></div>
+        <div className="project-name">SIGEM-AO</div>
+      </div>
+    )
+  }
   if (error) return <div className="admin-dashboard"><p className="error-message">❌ {error}</p></div>
   if (!stats) return <div className="admin-dashboard"><p>Sem dados disponíveis</p></div>
 
@@ -353,7 +360,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="admin-header">
         <div className="admin-title">
-          <h1>📊 SIGEM-AO Admin Dashboard</h1>
+          <h1><img src="src/assets/SIGEM-LOGO.png" alt="SIGEM-LOGO" width={150}/> <br/>SIGEM-AO Admin Dashboard</h1>
           <p>Centro de Controle e Monitoramento</p>
         </div>
         <div className="admin-user">
@@ -560,6 +567,7 @@ export default function AdminDashboard() {
                     <th>ID</th>
                     <th>Título</th>
                     <th>Endereço</th>
+                    <th>Reportado por</th>
                     <th>Severidade</th>
                     <th>Estado</th>
                     <th>Data</th>
@@ -580,6 +588,10 @@ export default function AdminDashboard() {
                       <td>#{incident.id}</td>
                       <td>{incident.title}</td>
                       <td>{incident.address}</td>
+                      <td>{incident.reporter
+                        ? `${incident.reporter.name}${incident.reporter.email ? ` (${incident.reporter.email})` : ''}`
+                        : '—'
+                      }</td>
                       <td>
                         <span 
                           className="severity-badge" 
